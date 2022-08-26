@@ -116,20 +116,78 @@ exports.getAllReservations = getAllReservations;
  * @param {*} limit The number of results to return.
  * @return {Promise<[{}]>}  A promise to the properties.
  */
-const getAllProperties = (options, limit = 10) => {
-  return pool
-    .query(`SELECT * FROM properties LIMIT $1`, [limit])
-    .then((result) => {
-      console.log(result.rows);
-      return result.rows;
-    })
-    .catch((err) => {
-      console.log(err.message);
-    });
+
+const getAllProperties = function (options, limit = 10) {
+
+  // 1: Array that contains parameters for query
+  const queryParams = [];
+
+  // 2: The first part of the query, containing the SELECT, FROM and JOIN ON statements
+  let queryString = `
+  SELECT properties.*, avg(property_reviews.rating) as average_rating
+  FROM properties
+  JOIN property_reviews ON properties.id = property_id
+  `;
+
+  // If the user clicks on the "My Listings" page, the owner_id is used so add it to the query string
+  if (options.owner_id) {
+    queryParams.push(`${options.owner_id}`);
+    queryString += `WHERE owner_id = $${queryParams.length} `;
+  }
+
+  // SEARCH
+
+  // If there is a search query in one of the fields, add a WHERE to the query
+  if (options.city || options.minimum_price_per_night || options.maximum_price_per_night || options.minimum_rating) {
+    queryString += `WHERE `;
+  }
+
+  // 3: If the user enters a city in the search field, add it to the params array and add it to the query string
+  if (options.city) {
+    queryParams.push(`%${options.city}%`);
+    queryString += `city LIKE $${queryParams.length} AND `;
+  }
+
+  // If the user enters a minimum price, add it to the query
+  if (options.minimum_price_per_night) {
+    queryParams.push(`${options.minimum_price_per_night}`);
+    queryString += `cost_per_night > $${queryParams.length} AND `;
+  }
+
+  // If the user enters a maximum price, add it to the query
+  if (options.maximum_price_per_night) {
+    queryParams.push(`${options.maximum_price_per_night}`);
+    queryString += `cost_per_night < $${queryParams.length} AND `;
+  }
+
+  // If the user enters a minimum rating, add it to the query
+  if (options.minimum_rating) {
+    queryParams.push(`${options.minimum_rating}`);
+    queryString += `rating >= $${queryParams.length} AND `;
+  }
+
+  // Remove the last AND from the search string
+  if (queryString.endsWith(`AND `)) {
+    queryString = queryString.slice(0, -4)
+  }
+
+
+  // 4: Add any additional queries that come after the WHERE statement
+  queryParams.push(limit);
+  queryString += `
+  GROUP BY properties.id
+  ORDER BY cost_per_night
+  LIMIT $${queryParams.length};
+  `;
+
+  // 5: Console log for testing
+  console.log(queryString, queryParams);
+
+  // 6: Run the query string
+  return pool.query(queryString, queryParams).then((res) => res.rows);
 };
 
 exports.getAllProperties = getAllProperties;
-
 
 
 
