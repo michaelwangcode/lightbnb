@@ -40,4 +40,19 @@ The `database.js` file in the `server` folder contains the queries used to displ
 
 ## Screenshots
 
+### Home Page:
+
+![](https://raw.githubusercontent.com/michaelwangcode/lightbnb/master/screenshots/home.png)
+
+### Sign Up:
+
+![](https://raw.githubusercontent.com/michaelwangcode/lightbnb/master/screenshots/signup.png)
+
+### Log In:
+
+![](https://raw.githubusercontent.com/michaelwangcode/lightbnb/master/screenshots/login.png)
+
+### Create Listing:
+
+![](https://raw.githubusercontent.com/michaelwangcode/lightbnb/master/screenshots/create.png)
 
