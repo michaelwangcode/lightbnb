@@ -6,7 +6,7 @@ LightBnB is a simple web application based on AirBnb.
 
 It uses a PostgreSQL database to store information about users, properties listings, reservations and reviews.
 
-Made during Lighthouse Labs (W
+Made during Lighthouse Labs (W05D2).
 
 ## Project Setup
 
@@ -16,7 +16,7 @@ Type `npm install` to download the packages for the project.
 
 If using vagrant, type `vagrant up` and `vagrant ssh` in the terminal.
 
-Start a new `psql` session by switching to the bootcampx dirctory and entering `psql` in the terminal.
+Start a new `psql` session by switching to the bootcampx directory and entering `psql` in the terminal.
 
 Create a database called `lightbnb` by typing `CREATE DATABASE lightbnb;` and enter `\c lightbnb` to use it.
 
